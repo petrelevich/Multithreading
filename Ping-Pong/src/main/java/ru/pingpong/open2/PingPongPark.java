@@ -1,4 +1,4 @@
-package ru.otus.pingpong.open2;
+package ru.pingpong.open2;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,14 +17,14 @@ public class PingPongPark {
     private final Utils utils;
     private final AtomicInteger counter = new AtomicInteger(1_000_000);
 
-    public PingPongPark(boolean demoMode) {
+    PingPongPark(boolean demoMode) {
         utils = new Utils(demoMode);
         new Thread(()-> this.action("ping")).start();
         new Thread(()-> this.action("PONG")).start();
     }
 
 
-    public void action(String message) {
+    private void action(String message) {
         while (counter.get() > 0) {
             if (last.get().equals(message)) {
                 parkedThread.set(Thread.currentThread());

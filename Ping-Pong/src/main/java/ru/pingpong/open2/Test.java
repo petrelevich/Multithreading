@@ -1,4 +1,4 @@
-package ru.otus.pingpong.open2;
+package ru.pingpong.open2;
 
 import java.util.concurrent.locks.LockSupport;
 

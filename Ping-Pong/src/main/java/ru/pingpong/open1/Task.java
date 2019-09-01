@@ -1,4 +1,4 @@
-package ru.otus.pingpong.open1;
+package ru.pingpong.open1;
 
 import java.time.LocalDateTime;
 
@@ -14,16 +14,16 @@ public class Task {
             obj.wait();
             System.out.println("OK!");
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         //waitTask()
 
         Task task = new Task();
         new Thread(task::action1).start();
-        sleep(5_000);
+        Thread.sleep(5_000);
         new Thread(task::action2).start();
     }
 
@@ -35,7 +35,7 @@ public class Task {
                 System.out.println(LocalDateTime.now() + " action1 end");
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -43,14 +43,6 @@ public class Task {
         synchronized (obj) {
             System.out.println(LocalDateTime.now() + " action2:" + Thread.currentThread().getName());
             obj.notifyAll();
-        }
-    }
-
-    private static void sleep(long mils) {
-        try {
-            Thread.sleep(mils);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 }

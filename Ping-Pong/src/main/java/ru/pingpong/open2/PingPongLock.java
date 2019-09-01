@@ -1,4 +1,4 @@
-package ru.otus.pingpong.open2;
+package ru.pingpong.open2;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -22,7 +22,7 @@ public class PingPongLock {
     private final AtomicInteger counter = new AtomicInteger(1_000_000);
     private final Utils utils;
 
-    public PingPongLock(boolean demoMode) {
+    PingPongLock(boolean demoMode) {
         utils = new Utils(demoMode);
         new Thread(()-> this.action("ping")).start();
         new Thread(()-> this.action("PONG")).start();
@@ -30,23 +30,27 @@ public class PingPongLock {
     }
 
     private void action(String message) {
-        while (counter.get() > 0) {
-            lock.lock();
-            try {
-                if(last.equals(message)) {
-                    System.out.println("do await, message:" + message);
-                    await(condition);
-                    System.out.println("posle await, message:" + message);
-                } else {
-                    utils.print(message);
-                    counter.decrementAndGet();
-                    last = message;
-                    condition.signal();
-                    utils.sleep();
+        try {
+            while (counter.get() > 0) {
+                lock.lock();
+                try {
+                    if(last.equals(message)) {
+                        System.out.println("before await, message:" + message);
+                        condition.await();
+                        System.out.println("after await, message:" + message);
+                    } else {
+                        utils.print(message);
+                        counter.decrementAndGet();
+                        last = message;
+                        condition.signal();
+                        utils.sleep();
+                    }
+                } finally {
+                    lock.unlock();
                 }
-            } finally {
-                lock.unlock();
             }
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -55,11 +59,4 @@ public class PingPongLock {
     }
 
 
-    private static void await(Condition condition) {
-        try {
-            condition.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 }

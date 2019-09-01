@@ -1,4 +1,4 @@
-package ru.otus.pingpong.open2;
+package ru.pingpong.open2;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,7 +14,7 @@ public class PingPongAtomic {
     private final Utils utils;
 
 
-    public PingPongAtomic(boolean demoMode) {
+    PingPongAtomic(boolean demoMode) {
         utils = new Utils(demoMode);
         new Thread(()-> this.action(1, 0)).start();
         new Thread(()-> this.action(0, 1)).start();
